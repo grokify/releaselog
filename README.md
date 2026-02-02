@@ -10,12 +10,12 @@ Similar to [Zoom's Developer Changelog](https://developers.zoom.us/changelog/), 
 
 ## Features
 
-- **Fetch releases** from GitHub organizations, users, or specific repositories
-- **JSON Intermediate Representation** for programmatic access
-- **Multiple output formats**: Markdown, XLSX, JSON
-- **Filtering**: by date, repository, owner, release type, categories
-- **Embeddable JavaScript widget** (`@grokify/releaselog`) with Tabulator-like API
-- **Theming support**: Default, Dark, Minimal themes with CSS variables
+- 📥 **Fetch releases** from GitHub organizations, users, or specific repositories
+- 📦 **JSON Intermediate Representation** for programmatic access
+- 📄 **Multiple output formats**: Markdown, XLSX, JSON
+- 🔍 **Filtering**: by date, repository, owner, release type, categories
+- 🧩 **Embeddable JavaScript widget** (`@grokify/releaselog`) with Tabulator-like API
+- 🎨 **Theming support**: Default, Dark, Minimal themes with CSS variables
 
 ## Installation
 
