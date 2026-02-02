@@ -1,0 +1,55 @@
+site_name: ReleaseLog
+site_description: Aggregate GitHub releases into a unified release log
+site_url: https://grokify.github.io/releaselog
+repo_url: https://github.com/grokify/releaselog
+repo_name: grokify/releaselog
+
+docs_dir: docs
+site_dir: _site
+
+nav:
+  - Home: index.html
+  - Getting Started: getting-started.md
+  - CLI Reference: cli-reference.md
+  - JavaScript API: javascript-api.md
+  - Demo: examples/standalone.html
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/grokify/releaselog
+    - icon: fontawesome/brands/npm
+      link: https://www.npmjs.com/package/@grokify/releaselog

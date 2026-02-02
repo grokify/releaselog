@@ -6,8 +6,10 @@
   <title>ReleaseLog Viewer - Full Demo</title>
   <meta name="description" content="Full-featured ReleaseLog viewer demo. Enter any JSON URL to view releases.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
-  <link rel="stylesheet" href="../dist/releaselog-viewer.css">
-  <!-- Dependencies for cal-heatmap -->
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.css">
+
+  <!-- Cal-heatmap dependencies -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
   <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
@@ -35,7 +37,8 @@
 <body>
   <div id="releases"></div>
 
-  <script src="../dist/releaselog-viewer.js"></script>
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <script src="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.min.js"></script>
   <script>
     // Get URL from query parameter
     function getUrlParam() {
@@ -65,7 +68,10 @@
       }
     });
 
-    // Default sample data URL
+    // Default sample data URL (can be overridden via ?url= parameter)
+    // Examples:
+    //   ?url=https://agentplexus.dev/releases/agentplexus-releases.json
+    //   ?url=sample-data.json
     var DEFAULT_URL = 'sample-data.json';
 
     // Load from URL parameter or default
