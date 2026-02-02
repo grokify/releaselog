@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog - Unified Release Tracking for GitHub</title>
+  <meta name="description" content="Aggregate and display GitHub releases across multiple organizations. Embeddable viewer with heatmap, filtering, and theming.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+
+  <!-- ReleaseLog Viewer CSS (from unpkg CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.css">
+
+  <!-- Cal-heatmap CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
+
+  <style>
+    /* ========================================
+       CSS Variables
+       ======================================== */
+    :root {
+      --color-bg: #ffffff;
+      --color-bg-alt: #f6f8fa;
+      --color-text: #1f2328;
+      --color-text-muted: #59636e;
+      --color-primary: #0969da;
+      --color-primary-hover: #0550ae;
+      --color-border: #d1d9e0;
+      --color-code-bg: #f6f8fa;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      --max-width: 1200px;
+      --header-height: 64px;
+    }
+
+    /* ========================================
+       Reset & Base
+       ======================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========================================
+       Header
+       ======================================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+    }
+
+    .header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav a {
+      color: var(--color-text);
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .nav a:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--color-text-muted);
+      text-decoration: none;
+    }
+
+    /* ========================================
+       Hero Section
+       ======================================== */
+    .hero {
+      padding: 80px 24px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
+    }
+
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+      line-height: 1.2;
+    }
+
+    .hero-tagline {
+      font-size: 20px;
+      color: var(--color-text-muted);
+      margin: 0 0 32px 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ========================================
+       Demo Section
+       ======================================== */
+    .demo-section {
+      padding: 60px 24px;
+      background: var(--color-bg);
+    }
+
+    .demo-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 600;
+      text-align: center;
+      margin: 0 0 16px 0;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      text-align: center;
+      margin: 0 0 40px 0;
+    }
+
+    .demo-container {
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--color-bg-alt);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .demo-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .demo-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-border);
+    }
+
+    .demo-dot.red { background: #ff5f57; }
+    .demo-dot.yellow { background: #febc2e; }
+    .demo-dot.green { background: #28c840; }
+
+    .demo-link {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    #demo-viewer {
+      min-height: 500px;
+    }
+
+    /* Hide URL bar in demo */
+    #demo-viewer .rlv-url-bar {
+      display: none;
+    }
+
+    /* ========================================
+       Features Section
+       ======================================== */
+    .features-section {
+      padding: 80px 24px;
+      background: var(--color-bg-alt);
+    }
+
+    .features-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .feature-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    /* ========================================
+       Quick Start Section
+       ======================================== */
+    .quickstart-section {
+      padding: 80px 24px;
+      background: var(--color-bg);
+    }
+
+    .quickstart-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .code-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: -1px;
+    }
+
+    .code-tab {
+      padding: 10px 20px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--color-text-muted);
+    }
+
+    .code-tab.active {
+      background: var(--color-code-bg);
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-code-bg);
+    }
+
+    .code-block {
+      display: none;
+      background: var(--color-code-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 0 8px 8px 8px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .code-block.active {
+      display: block;
+    }
+
+    .code-block pre {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .code-block code {
+      color: var(--color-text);
+    }
+
+    .code-comment {
+      color: var(--color-text-muted);
+    }
+
+    .code-string {
+      color: #0a3069;
+    }
+
+    .code-keyword {
+      color: #cf222e;
+    }
+
+    /* ========================================
+       Footer
+       ======================================== */
+    .site-footer {
+      padding: 40px 24px;
+      background: var(--color-bg-alt);
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      color: var(--color-text-muted);
+      font-size: 14px;
+    }
+
+    .footer-copyright {
+      color: var(--color-text-muted);
+      font-size: 14px;
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero-tagline {
+        font-size: 18px;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cal-heatmap tooltip override */
+    #ch-tooltip,
+    #ch-tooltip * {
+      font-family: var(--font-sans) !important;
+    }
+    #ch-tooltip {
+      background: #1f2328 !important;
+      color: #ffffff !important;
+      padding: 8px 12px !important;
+      border-radius: 6px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      font-size: 13px !important;
+      line-height: 1.4 !important;
+      max-width: 250px !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="./" class="logo">
+        <span class="logo-icon">📦</span>
+        <span>ReleaseLog</span>
+      </a>
+      <nav class="nav">
+        <a href="#demo">Demo</a>
+        <a href="#features">Features</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="getting-started/">Docs</a>
+        <a href="https://github.com/grokify/releaselog" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Unified Release Tracking for GitHub</h1>
+      <p class="hero-tagline">
+        Aggregate releases across multiple organizations into a single, filterable view.
+        Embeddable viewer with heatmap visualization, search, and theming.
+      </p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary">See Demo</a>
+        <a href="examples/standalone.html" class="btn btn-outline">Try Full Viewer</a>
+        <a href="https://www.npmjs.com/package/@grokify/releaselog" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M0 0v16h16V0H0zm13 13H8V5h2.5v5.5H13V5h-2.5V2.5H3V13h10v-2.5z"/></svg>
+          npm install
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo" class="demo-section">
+    <div class="demo-inner">
+      <h2 class="section-title">Live Demo</h2>
+      <p class="section-subtitle">
+        Interactive release log viewer with GitHub-style heatmap. Click cells to filter by date.
+      </p>
+      <div class="demo-container">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <span class="demo-dot red"></span>
+            <span class="demo-dot yellow"></span>
+            <span class="demo-dot green"></span>
+          </div>
+          <a href="examples/standalone.html" class="demo-link">Open full viewer with URL input &rarr;</a>
+        </div>
+        <div id="demo-viewer"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="features-section">
+    <div class="features-inner">
+      <h2 class="section-title">Features</h2>
+      <p class="section-subtitle">
+        Everything you need to track releases across your organization
+      </p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">GitHub-Style Heatmap</h3>
+          <p class="feature-desc">Visualize release activity over time with an interactive contribution-style heatmap. Click any cell to filter releases by date.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3 class="feature-title">Powerful Filtering</h3>
+          <p class="feature-desc">Filter by repository, date range, release type, search text, and more. Multi-select repository dropdown with search.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">Multiple Sources</h3>
+          <p class="feature-desc">Aggregate releases from GitHub organizations, users, or specific repositories into a unified view.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Themeable</h3>
+          <p class="feature-desc">CSS custom properties for easy theming. Includes default, dark, and minimal themes out of the box.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">♿</div>
+          <h3 class="feature-title">Accessible</h3>
+          <p class="feature-desc">WCAG 2.2 AA compliant with keyboard navigation, screen reader support, and proper ARIA labels.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Lightweight</h3>
+          <p class="feature-desc">32KB minified viewer bundle. No framework dependencies. Works with any tech stack via CDN or npm.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section id="quickstart" class="quickstart-section">
+    <div class="quickstart-inner">
+      <h2 class="section-title">Quick Start</h2>
+      <p class="section-subtitle">
+        Get started in minutes with CDN or npm
+      </p>
+
+      <div class="code-tabs">
+        <button class="code-tab active" data-tab="cdn">CDN</button>
+        <button class="code-tab" data-tab="npm">npm</button>
+        <button class="code-tab" data-tab="cli">Go CLI</button>
+      </div>
+
+      <div class="code-block active" data-tab="cdn">
+<pre><code><span class="code-comment">&lt;!-- Include CSS and JS from unpkg --&gt;</span>
+<span class="code-keyword">&lt;link</span> rel=<span class="code-string">"stylesheet"</span> href=<span class="code-string">"https://unpkg.com/@grokify/releaselog/dist/releaselog-viewer.css"</span><span class="code-keyword">&gt;</span>
+<span class="code-keyword">&lt;script</span> src=<span class="code-string">"https://unpkg.com/@grokify/releaselog/dist/releaselog-viewer.min.js"</span><span class="code-keyword">&gt;&lt;/script&gt;</span>
+
+<span class="code-comment">&lt;!-- Create container --&gt;</span>
+<span class="code-keyword">&lt;div</span> id=<span class="code-string">"releases"</span><span class="code-keyword">&gt;&lt;/div&gt;</span>
+
+<span class="code-comment">&lt;!-- Initialize viewer --&gt;</span>
+<span class="code-keyword">&lt;script&gt;</span>
+  new ReleaseLogViewer(<span class="code-string">'#releases'</span>, {
+    url: <span class="code-string">'releases.json'</span>,
+    showHeatmap: true
+  });
+<span class="code-keyword">&lt;/script&gt;</span></code></pre>
+      </div>
+
+      <div class="code-block" data-tab="npm">
+<pre><code><span class="code-comment">// Install</span>
+npm install @grokify/releaselog
+
+<span class="code-comment">// Import and use</span>
+<span class="code-keyword">import</span> { ReleaseLogViewer } <span class="code-keyword">from</span> <span class="code-string">'@grokify/releaselog/viewer'</span>;
+<span class="code-keyword">import</span> <span class="code-string">'@grokify/releaselog/viewer/css'</span>;
+
+<span class="code-keyword">const</span> viewer = <span class="code-keyword">new</span> ReleaseLogViewer(<span class="code-string">'#releases'</span>, {
+  url: <span class="code-string">'/api/releases.json'</span>,
+  showHeatmap: <span class="code-keyword">true</span>,
+  heatmapColors: [<span class="code-string">'#ebedf0'</span>, <span class="code-string">'#9be9a8'</span>, <span class="code-string">'#40c463'</span>, <span class="code-string">'#30a14e'</span>, <span class="code-string">'#216e39'</span>]
+});</code></pre>
+      </div>
+
+      <div class="code-block" data-tab="cli">
+<pre><code><span class="code-comment"># Install Go CLI</span>
+go install github.com/grokify/releaselog/cmd/releaselog@latest
+
+<span class="code-comment"># Fetch releases from a GitHub organization</span>
+releaselog fetch --org myorg -o releases.json
+
+<span class="code-comment"># Fetch from multiple sources</span>
+releaselog fetch --org myorg --user johndoe --repo google/go-github -o releases.json
+
+<span class="code-comment"># Generate Markdown changelog</span>
+releaselog generate releases.json --format md -o RELEASES.md</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://github.com/grokify/releaselog">GitHub</a>
+        <a href="https://www.npmjs.com/package/@grokify/releaselog">npm</a>
+        <a href="getting-started/">Documentation</a>
+        <a href="examples/standalone.html">Full Demo</a>
+      </div>
+      <p class="footer-copyright">
+        MIT License &copy; 2025 <a href="https://github.com/grokify">grokify</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts (from unpkg CDN) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/plugins/CalendarLabel.min.js"></script>
+  <script src="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.min.js"></script>
+
+  <script>
+    // Initialize demo viewer
+    document.addEventListener('DOMContentLoaded', function() {
+      var viewer = new ReleaseLogViewer('#demo-viewer', {
+        showUrlBar: false,
+        showHeader: false,
+        showHeatmap: true,
+        showHeatmapHelp: false,
+        pageSize: 10
+      });
+
+      // Load sample data
+      viewer.loadUrl('examples/sample-data.json');
+    });
+
+    // Code tabs
+    document.querySelectorAll('.code-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var tabName = this.dataset.tab;
+
+        // Update tab buttons
+        document.querySelectorAll('.code-tab').forEach(function(t) {
+          t.classList.remove('active');
+        });
+        this.classList.add('active');
+
+        // Update code blocks
+        document.querySelectorAll('.code-block').forEach(function(block) {
+          block.classList.remove('active');
+          if (block.dataset.tab === tabName) {
+            block.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

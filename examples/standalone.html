@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog Viewer - Full Demo</title>
+  <meta name="description" content="Full-featured ReleaseLog viewer demo. Enter any JSON URL to view releases.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.css">
+
+  <!-- Cal-heatmap dependencies -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/plugins/CalendarLabel.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
+  <style>
+    /* Force sans-serif and dark background on cal-heatmap tooltips */
+    #ch-tooltip,
+    #ch-tooltip * {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    }
+    #ch-tooltip {
+      background: #1f2328 !important;
+      color: #ffffff !important;
+      padding: 8px 12px !important;
+      border-radius: 6px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      font-size: 13px !important;
+      line-height: 1.4 !important;
+      max-width: 250px !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="releases"></div>
+
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <script src="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.min.js"></script>
+  <script>
+    // Get URL from query parameter
+    function getUrlParam() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('url');
+    }
+
+    // Update URL parameter when loading new data
+    function updateUrlParam(jsonUrl) {
+      var url = new URL(window.location);
+      url.searchParams.set('url', jsonUrl);
+      window.history.replaceState({}, '', url);
+    }
+
+    // Initialize viewer with all features enabled
+    var viewer = new ReleaseLogViewer('#releases', {
+      showUrlBar: true,
+      showHeader: true,
+      showHeatmap: true,
+      showHeatmapHelp: true,
+      onLoad: function(data) {
+        // Update browser URL when data loads
+        var urlInput = document.querySelector('.rlv-url-input');
+        if (urlInput && urlInput.value) {
+          updateUrlParam(urlInput.value);
+        }
+      }
+    });
+
+    // Default sample data URL (can be overridden via ?url= parameter)
+    // Examples:
+    //   ?url=https://agentplexus.dev/releases/agentplexus-releases.json
+    //   ?url=sample-data.json
+    var DEFAULT_URL = 'sample-data.json';
+
+    // Load from URL parameter or default
+    var urlParam = getUrlParam() || DEFAULT_URL;
+    setTimeout(function() {
+      var urlInput = document.querySelector('.rlv-url-input');
+      if (urlInput) {
+        urlInput.value = urlParam;
+      }
+      viewer.loadUrl(urlParam);
+    }, 0);
+  </script>
+</body>
+</html>
