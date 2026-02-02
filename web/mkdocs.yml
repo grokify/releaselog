@@ -1,0 +1,78 @@
+site_name: ReleaseLog
+site_description: A customizable release log viewer for websites
+site_url: https://grokify.github.io/releaselog/
+repo_url: https://github.com/grokify/releaselog
+repo_name: grokify/releaselog
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+  - Guide:
+    - Architecture: guide/architecture.md
+    - HTML Viewer: guide/html-viewer.md
+    - JavaScript Library: guide/javascript-library.md
+    - JSON Format: guide/json-format.md
+    - TypeScript & Zod: guide/typescript-zod.md
+    - Heatmap: guide/heatmap.md
+  - Reference:
+    - API: reference/api.md
+    - CSS Customization: reference/css-customization.md
+    - Specification: reference/specification.md
+  - Accessibility: accessibility.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/grokify/releaselog
