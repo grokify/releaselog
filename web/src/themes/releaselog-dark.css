@@ -1,0 +1,56 @@
+/**
+ * ReleaseLog - Dark Theme
+ * A dark mode theme with high contrast
+ */
+
+/* Import base styles */
+@import url('./releaselog.css');
+
+/* Dark theme overrides */
+.releaselog.releaselog-dark,
+.releaselog-dark .releaselog {
+  --rl-bg: #0d1117;
+  --rl-text: #c9d1d9;
+  --rl-text-muted: #8b949e;
+  --rl-border: #30363d;
+  --rl-border-dark: #484f58;
+
+  --rl-header-bg: #161b22;
+  --rl-row-alt-bg: #161b22;
+  --rl-row-hover-bg: #1f2428;
+
+  --rl-primary: #58a6ff;
+  --rl-primary-hover: #79b8ff;
+  --rl-success: #3fb950;
+  --rl-warning: #d29922;
+  --rl-danger: #f85149;
+
+  --rl-badge-release-bg: #238636;
+  --rl-badge-release-text: #ffffff;
+  --rl-badge-tag-bg: #8957e5;
+  --rl-badge-tag-text: #ffffff;
+  --rl-badge-prerelease-bg: #d29922;
+  --rl-badge-prerelease-text: #0d1117;
+}
+
+/* Dark specific adjustments */
+.releaselog-dark .releaselog-filters input,
+.releaselog-dark .releaselog-filters select,
+.releaselog-dark .releaselog-page,
+.releaselog-dark .releaselog-page-size {
+  background: var(--rl-bg);
+  color: var(--rl-text);
+  border-color: var(--rl-border);
+}
+
+.releaselog-dark .releaselog-filters input::placeholder {
+  color: var(--rl-text-muted);
+}
+
+.releaselog-dark .releaselog-filter-clear:hover {
+  background: var(--rl-row-hover-bg);
+}
+
+.releaselog-dark .releaselog-error {
+  background: rgba(248, 81, 73, 0.15);
+}

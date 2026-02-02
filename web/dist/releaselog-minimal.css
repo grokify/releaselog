@@ -1,0 +1,75 @@
+/**
+ * ReleaseLog - Minimal Theme
+ * A clean, borderless theme for embedding
+ */
+
+/* Import base styles */
+@import url('./releaselog.css');
+
+/* Minimal theme overrides */
+.releaselog.releaselog-minimal,
+.releaselog-minimal .releaselog {
+  --rl-border: transparent;
+  --rl-border-dark: #e1e4e8;
+  --rl-header-bg: transparent;
+  --rl-row-alt-bg: transparent;
+  --rl-radius: 0;
+}
+
+/* Remove outer border */
+.releaselog-minimal.releaselog {
+  border: none;
+}
+
+/* Simplified stats */
+.releaselog-minimal .releaselog-stats {
+  background: transparent;
+  border-bottom: 1px solid var(--rl-border-dark);
+  padding: var(--rl-spacing-sm) 0;
+}
+
+/* Simplified filters */
+.releaselog-minimal .releaselog-filters {
+  background: transparent;
+  border-bottom: 1px solid var(--rl-border-dark);
+  padding: var(--rl-spacing-md) 0;
+}
+
+/* Minimal table header */
+.releaselog-minimal .releaselog-header-cell {
+  background: transparent;
+  border-bottom: 2px solid var(--rl-border-dark);
+  padding: var(--rl-spacing-sm) var(--rl-spacing-sm);
+}
+
+/* Minimal cells */
+.releaselog-minimal .releaselog-cell {
+  padding: var(--rl-spacing-sm);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Minimal pagination */
+.releaselog-minimal .releaselog-pagination {
+  background: transparent;
+  border-top: 1px solid var(--rl-border-dark);
+}
+
+/* Subtle hover */
+.releaselog-minimal .releaselog-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Cleaner buttons */
+.releaselog-minimal .releaselog-page {
+  border: none;
+  background: transparent;
+}
+
+.releaselog-minimal .releaselog-page:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.releaselog-minimal .releaselog-page-active {
+  background: var(--rl-primary);
+  color: white;
+}

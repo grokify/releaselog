@@ -1,0 +1,87 @@
+{
+  "name": "@grokify/releaselog",
+  "version": "0.1.0",
+  "description": "Customizable release log viewer for websites - like Tabulator but for GitHub releases",
+  "main": "dist/releaselog.umd.js",
+  "module": "dist/releaselog.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/releaselog.esm.js",
+      "require": "./dist/releaselog.umd.js"
+    },
+    "./viewer": {
+      "types": "./dist/viewer/index.d.ts",
+      "import": "./dist/releaselog-viewer.esm.js",
+      "require": "./dist/releaselog-viewer.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js",
+      "require": "./dist/schemas/index.cjs"
+    },
+    "./css": "./dist/releaselog.css",
+    "./css/dark": "./dist/releaselog-dark.css",
+    "./css/minimal": "./dist/releaselog-minimal.css",
+    "./viewer/css": "./dist/releaselog-viewer.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run build:js && npm run build:viewer && npm run build:css && npm run build:types",
+    "build:js": "esbuild src/index.ts --bundle --format=esm --outfile=dist/releaselog.esm.js --minify --sourcemap && esbuild src/index.ts --bundle --format=iife --global-name=ReleaseLog --outfile=dist/releaselog.umd.js --minify --sourcemap",
+    "build:viewer": "esbuild src/viewer/index.ts --bundle --format=iife --global-name=__ReleaseLogViewerModule --outfile=dist/releaselog-viewer.js --sourcemap --footer:js=\"if(typeof window!=='undefined'){window.ReleaseLogViewer=__ReleaseLogViewerModule.ReleaseLogViewer||__ReleaseLogViewerModule.default;}\" && esbuild src/viewer/index.ts --bundle --format=iife --global-name=__ReleaseLogViewerModule --outfile=dist/releaselog-viewer.min.js --minify --sourcemap --footer:js=\"if(typeof window!=='undefined'){window.ReleaseLogViewer=__ReleaseLogViewerModule.ReleaseLogViewer||__ReleaseLogViewerModule.default;}\" && esbuild src/viewer/index.ts --bundle --format=esm --outfile=dist/releaselog-viewer.esm.js --minify --sourcemap",
+    "build:css": "/bin/cp src/themes/*.css dist/",
+    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
+    "dev": "esbuild src/index.ts --bundle --format=iife --global-name=ReleaseLog --outfile=dist/releaselog.umd.js --sourcemap --watch --servedir=examples",
+    "dev:viewer": "esbuild src/viewer/index.ts --bundle --format=iife --global-name=__ReleaseLogViewerModule --outfile=dist/releaselog-viewer.js --sourcemap --watch --servedir=examples --footer:js=\"if(typeof window!=='undefined'){window.ReleaseLogViewer=__ReleaseLogViewerModule.ReleaseLogViewer||__ReleaseLogViewerModule.default;}\"",
+    "clean": "rm -rf dist/*",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "docs:install": "pip install -r requirements-docs.txt",
+    "docs:serve": "mkdocs serve",
+    "docs:build": "mkdocs build",
+    "docs:deploy": "mkdocs gh-deploy --force"
+  },
+  "keywords": [
+    "changelog",
+    "releases",
+    "github",
+    "widget",
+    "table",
+    "viewer",
+    "zod",
+    "wcag",
+    "accessibility",
+    "a11y",
+    "heatmap"
+  ],
+  "author": "John Wang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grokify/releaselog.git",
+    "directory": "web"
+  },
+  "homepage": "https://github.com/grokify/releaselog#readme",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "peerDependencies": {
+    "cal-heatmap": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "cal-heatmap": {
+      "optional": true
+    }
+  }
+}
