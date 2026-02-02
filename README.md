@@ -1,8 +1,10 @@
 # ReleaseLog
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/grokify/releaselog.svg)](https://pkg.go.dev/github.com/grokify/releaselog)
-[![Go Report Card](https://goreportcard.com/badge/github.com/grokify/releaselog)](https://goreportcard.com/report/github.com/grokify/releaselog)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Build Status][build-status-svg]][build-status-url]
+[![Lint Status][lint-status-svg]][lint-status-url]
+[![Go Report Card][goreport-svg]][goreport-url]
+[![Docs][docs-godoc-svg]][docs-godoc-url]
+[![License][license-svg]][license-url]
 
 **ReleaseLog** aggregates GitHub releases across multiple organizations and users into a unified release log. Think of it as a changelog for your entire organization - tracking releases across all your projects in one place.
 
@@ -329,3 +331,16 @@ MIT License - see [LICENSE](LICENSE) for details.
 - [structured-changelog](https://github.com/grokify/structured-changelog) - Structured changelog format and tools
 - [Tabulator](https://tabulator.info/) - JavaScript table library (API inspiration)
 - [go-github](https://github.com/google/go-github) - GitHub API client for Go
+
+ [build-status-svg]: https://github.com/grokify/releaselog/actions/workflows/ci.yaml/badge.svg?branch=main
+ [build-status-url]: https://github.com/grokify/releaselog/actions/workflows/ci.yaml
+ [lint-status-svg]: https://github.com/grokify/releaselog/actions/workflows/lint.yaml/badge.svg?branch=main
+ [lint-status-url]: https://github.com/grokify/releaselog/actions/workflows/lint.yaml
+ [goreport-svg]: https://goreportcard.com/badge/github.com/grokify/releaselog
+ [goreport-url]: https://goreportcard.com/report/github.com/grokify/releaselog
+ [docs-godoc-svg]: https://pkg.go.dev/badge/github.com/grokify/releaselog
+ [docs-godoc-url]: https://pkg.go.dev/github.com/grokify/releaselog
+ [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
+ [license-url]: https://github.com/grokify/releaselog/blob/master/LICENSE
+ [used-by-svg]: https://sourcegraph.com/github.com/grokify/releaselog/-/badge.svg
+ [used-by-url]: https://sourcegraph.com/github.com/grokify/releaselog?badge
