@@ -1,6 +1,6 @@
 {
   "name": "@grokify/releaselog",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Customizable release log viewer for websites - like Tabulator but for GitHub releases",
   "main": "dist/releaselog.umd.js",
   "module": "dist/releaselog.esm.js",
