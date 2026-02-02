@@ -4,14 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Release Log Viewer</title>
-  <link rel="stylesheet" href="../dist/releaselog-viewer.css">
-  <!-- Dependencies for cal-heatmap -->
+
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.css">
+
+  <!-- Cal-heatmap dependencies -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
   <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
   <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
   <script src="https://unpkg.com/cal-heatmap/dist/plugins/CalendarLabel.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
+
   <style>
     /* Force sans-serif and dark background on cal-heatmap tooltips */
     #ch-tooltip,
@@ -33,7 +37,8 @@
 <body>
   <div id="releases"></div>
 
-  <script src="../dist/releaselog-viewer.js"></script>
+  <!-- ReleaseLog Viewer (from unpkg CDN) -->
+  <script src="https://unpkg.com/@grokify/releaselog@0.1.0/dist/releaselog-viewer.min.js"></script>
   <script>
     // Get URL from query parameter
     function getUrlParam() {
@@ -47,6 +52,12 @@
       url.searchParams.set('url', jsonUrl);
       window.history.replaceState({}, '', url);
     }
+
+    // Default sample data URL (can be overridden via ?url= parameter)
+    // Examples:
+    //   ?url=https://agentplexus.dev/releases/agentplexus-releases.json
+    //   ?url=sample-data.json
+    var DEFAULT_URL = 'sample-data.json';
 
     // Initialize viewer with all features enabled
     var viewer = new ReleaseLogViewer('#releases', {
@@ -62,9 +73,6 @@
         }
       }
     });
-
-    // Default sample data URL
-    var DEFAULT_URL = 'sample-data.json';
 
     // Load from URL parameter or default
     var urlParam = getUrlParam() || DEFAULT_URL;
