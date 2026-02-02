@@ -1,0 +1,55 @@
+# Release Log (By Repository)
+
+Generated: {{ .Log.GeneratedAt.Format "2006-01-02 15:04:05 UTC" }}
+
+{{- if .Log.Stats }}
+
+## Summary
+
+- **Total Releases:** {{ .Log.Stats.TotalReleases }}
+- **Total Repositories:** {{ .Log.Stats.TotalRepos }}
+{{- end }}
+
+## Table of Contents
+
+{{- range $repo, $releases := .ByRepo }}
+- [{{ $repo }}](#{{ $repo | escapeTitle }}) ({{ len $releases }} releases)
+{{- end }}
+
+---
+
+{{- range $repo, $releases := .ByRepo }}
+
+## {{ $repo }}
+
+| Date | Tag | Name | Type |
+|------|-----|------|------|
+{{- range $releases }}
+| {{ formatDate .PublishedAt }} | [{{ .TagName }}]({{ if .URLs }}{{ .URLs.GitHubRelease }}{{ end }}) | {{ truncate (escapeTitle .Name) 50 }} | {{ .Type }} |
+{{- end }}
+
+{{- range $releases }}
+
+### {{ .TagName }}
+
+**Date:** {{ formatDate .PublishedAt }}
+**Type:** {{ .Type }}
+{{- if .Prerelease }}
+**Pre-release:** Yes
+{{- end }}
+{{- if .Author }}
+**Author:** [@{{ .Author.Login }}](https://github.com/{{ .Author.Login }})
+{{- end }}
+{{- if .URLs }}
+**Link:** [{{ .URLs.GitHubRelease }}]({{ .URLs.GitHubRelease }})
+{{- end }}
+
+{{- if .Body }}
+
+{{ .Body }}
+{{- end }}
+
+---
+
+{{- end }}
+{{- end }}

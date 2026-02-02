@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog - Dark Theme Example</title>
+  <link rel="stylesheet" href="../dist/releaselog.css">
+  <link rel="stylesheet" href="../dist/releaselog-dark.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #0d1117;
+      color: #c9d1d9;
+    }
+    h1 { margin-bottom: 10px; }
+    .description { color: #8b949e; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>ReleaseLog - Dark Theme</h1>
+  <p class="description">
+    Dark mode theme for low-light environments.
+  </p>
+
+  <div id="releases"></div>
+
+  <script src="../dist/releaselog.umd.js"></script>
+  <script>
+    const table = new ReleaseLog.ReleaseLog("#releases", {
+      ajaxURL: "sample-data.json",
+      theme: "dark",
+      pagination: {
+        enabled: true,
+        size: 15
+      },
+      events: {
+        releaseClick: function(event, release) {
+          if (release.html_url) {
+            window.open(release.html_url, '_blank');
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

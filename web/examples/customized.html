@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog - Customized Example</title>
+  <link rel="stylesheet" href="../dist/releaselog.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #24292e; margin-bottom: 10px; }
+    .description { color: #586069; margin-bottom: 20px; }
+    .options { margin-bottom: 20px; }
+    .options label { margin-right: 15px; }
+  </style>
+</head>
+<body>
+  <h1>ReleaseLog - Customized Example</h1>
+  <p class="description">
+    A fully customized example with custom columns, formatters, and event handling.
+  </p>
+
+  <div class="options">
+    <label>
+      <input type="checkbox" id="showBody" checked> Show release notes
+    </label>
+    <label>
+      <input type="checkbox" id="showAuthor"> Show author
+    </label>
+    <button onclick="table.clearFilter()">Clear Filters</button>
+    <button onclick="table.setSort('published_at', 'asc')">Sort Oldest First</button>
+    <button onclick="table.setSort('published_at', 'desc')">Sort Newest First</button>
+  </div>
+
+  <div id="releases"></div>
+
+  <!-- Detail modal -->
+  <div id="modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; max-width:800px; margin:50px auto; padding:20px; border-radius:8px; max-height:80vh; overflow:auto;">
+      <button onclick="document.getElementById('modal').style.display='none'" style="float:right;">Close</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="../dist/releaselog.umd.js"></script>
+  <script>
+    // Custom column definitions
+    const columns = [
+      {
+        field: 'published_at',
+        title: 'Released',
+        width: '120px',
+        sortable: true,
+        formatter: 'date',
+      },
+      {
+        field: 'repo_path',
+        title: 'Project',
+        width: '200px',
+        sortable: true,
+        formatter: function(value, release) {
+          return '<a href="https://github.com/' + value + '" target="_blank">' +
+                 '<strong>' + release.repo_name + '</strong>' +
+                 '<br><small style="color:#586069">' + release.repo_owner + '</small></a>';
+        }
+      },
+      {
+        field: 'tag_name',
+        title: 'Version',
+        width: '100px',
+        sortable: true,
+        formatter: function(value, release) {
+          var cls = release.prerelease ? 'releaselog-badge-prerelease' : 'releaselog-badge-release';
+          return '<span class="releaselog-badge ' + cls + '">' + value + '</span>';
+        }
+      },
+      {
+        field: 'name',
+        title: 'Release Name',
+        sortable: true,
+        formatter: function(value, release) {
+          // Truncate long names
+          var name = value || release.tag_name;
+          if (name.length > 60) {
+            name = name.substring(0, 57) + '...';
+          }
+          return '<a href="' + release.html_url + '" target="_blank">' + name + '</a>';
+        }
+      },
+      {
+        field: 'type',
+        title: 'Type',
+        width: '80px',
+        sortable: true,
+        formatter: 'badge',
+        visible: false
+      },
+      {
+        field: 'author_login',
+        title: 'Author',
+        width: '120px',
+        formatter: 'avatar',
+        visible: false
+      }
+    ];
+
+    // Create table with custom configuration
+    var table = new ReleaseLog.ReleaseLog("#releases", {
+      ajaxURL: "sample-data.json",
+      columns: columns,
+      pagination: {
+        enabled: true,
+        size: 15,
+        sizeSelector: [10, 15, 25, 50]
+      },
+      initialSort: [{ field: 'published_at', direction: 'desc' }],
+      showStats: true,
+      showFilters: true,
+      alternateRowColors: true,
+      labels: {
+        filterPlaceholder: 'Search by name, version, or project...',
+        statsTotal: 'Releases',
+        statsRepos: 'Projects',
+        noData: 'No releases match your filters'
+      },
+      events: {
+        releaseClick: function(event, release) {
+          showReleaseDetails(release);
+        },
+        releaseDblClick: function(event, release) {
+          if (release.html_url) {
+            window.open(release.html_url, '_blank');
+          }
+        },
+        filterChange: function(filters) {
+          console.log('Filters changed:', filters);
+        },
+        sortChange: function(sort) {
+          console.log('Sort changed:', sort);
+        }
+      }
+    });
+
+    // Show release details in modal
+    function showReleaseDetails(release) {
+      var html = '<h2>' + (release.name || release.tag_name) + '</h2>';
+      html += '<p><strong>Repository:</strong> ' + release.repo_path + '</p>';
+      html += '<p><strong>Version:</strong> ' + release.tag_name + '</p>';
+      html += '<p><strong>Type:</strong> ' + release.type + '</p>';
+      if (release.prerelease) {
+        html += '<p><strong>Pre-release:</strong> Yes</p>';
+      }
+      if (release.published_at) {
+        html += '<p><strong>Published:</strong> ' + new Date(release.published_at).toLocaleDateString() + '</p>';
+      }
+      if (release.author_login) {
+        html += '<p><strong>Author:</strong> @' + release.author_login + '</p>';
+      }
+      if (release.body) {
+        html += '<hr><div style="white-space:pre-wrap; font-family:monospace; font-size:13px; background:#f6f8fa; padding:15px; border-radius:6px;">' + escapeHtml(release.body) + '</div>';
+      }
+      if (release.html_url) {
+        html += '<p style="margin-top:15px;"><a href="' + release.html_url + '" target="_blank">View on GitHub →</a></p>';
+      }
+
+      document.getElementById('modal-content').innerHTML = html;
+      document.getElementById('modal').style.display = 'block';
+    }
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Toggle columns
+    document.getElementById('showAuthor').addEventListener('change', function() {
+      // Note: Column visibility toggle would require re-render support
+      console.log('Author visibility:', this.checked);
+    });
+  </script>
+</body>
+</html>

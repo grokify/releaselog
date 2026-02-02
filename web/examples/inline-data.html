@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog - Inline Data Example</title>
+  <link rel="stylesheet" href="../dist/releaselog.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #24292e; margin-bottom: 10px; }
+    .description { color: #586069; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>ReleaseLog - Inline Data</h1>
+  <p class="description">
+    Example using inline JavaScript data instead of loading from URL.
+  </p>
+
+  <div id="releases"></div>
+
+  <script src="../dist/releaselog.umd.js"></script>
+  <script>
+    // Inline release data
+    const releaseData = {
+      ir_version: "1.0",
+      generated_at: new Date().toISOString(),
+      releases: [
+        {
+          id: 1,
+          repo_path: "example/project-a",
+          repo_owner: "example",
+          repo_name: "project-a",
+          type: "release",
+          tag_name: "v2.0.0",
+          name: "Version 2.0 - Major Update",
+          body: "This is a major release with breaking changes.\n\n- New feature A\n- New feature B\n- Breaking: Changed API",
+          published_at: "2024-01-15T10:00:00Z",
+          prerelease: false,
+          html_url: "https://github.com/example/project-a/releases/tag/v2.0.0",
+          author_login: "developer1"
+        },
+        {
+          id: 2,
+          repo_path: "example/project-a",
+          repo_owner: "example",
+          repo_name: "project-a",
+          type: "release",
+          tag_name: "v1.5.0",
+          name: "Version 1.5",
+          body: "Minor feature release.\n\n- Added dark mode\n- Performance improvements",
+          published_at: "2024-01-10T10:00:00Z",
+          prerelease: false,
+          html_url: "https://github.com/example/project-a/releases/tag/v1.5.0",
+          author_login: "developer1"
+        },
+        {
+          id: 3,
+          repo_path: "example/project-b",
+          repo_owner: "example",
+          repo_name: "project-b",
+          type: "release",
+          tag_name: "v3.0.0-beta.1",
+          name: "3.0 Beta 1",
+          body: "First beta of version 3.0\n\n- Complete rewrite\n- New architecture",
+          published_at: "2024-01-12T10:00:00Z",
+          prerelease: true,
+          html_url: "https://github.com/example/project-b/releases/tag/v3.0.0-beta.1",
+          author_login: "developer2"
+        },
+        {
+          id: 4,
+          repo_path: "example/project-b",
+          repo_owner: "example",
+          repo_name: "project-b",
+          type: "release",
+          tag_name: "v2.8.0",
+          name: "Version 2.8",
+          body: "Stability release with bug fixes.",
+          published_at: "2024-01-08T10:00:00Z",
+          prerelease: false,
+          html_url: "https://github.com/example/project-b/releases/tag/v2.8.0",
+          author_login: "developer2"
+        },
+        {
+          id: 5,
+          repo_path: "example/library",
+          repo_owner: "example",
+          repo_name: "library",
+          type: "tag",
+          tag_name: "v1.0.0",
+          name: "v1.0.0",
+          published_at: "2024-01-05T10:00:00Z",
+          prerelease: false,
+          html_url: "https://github.com/example/library/releases/tag/v1.0.0"
+        }
+      ],
+      stats: {
+        total_releases: 5,
+        total_repos: 3
+      }
+    };
+
+    // Create table with inline data
+    const table = new ReleaseLog.ReleaseLog("#releases", {
+      data: releaseData,
+      pagination: {
+        enabled: true,
+        size: 10
+      },
+      showStats: true,
+      events: {
+        tableBuilt: function() {
+          console.log('Table built with inline data');
+        }
+      }
+    });
+
+    // Example: dynamically add more data
+    window.addRelease = function() {
+      const data = table.getData();
+      if (data) {
+        data.releases.push({
+          id: Date.now(),
+          repo_path: "example/new-project",
+          repo_owner: "example",
+          repo_name: "new-project",
+          type: "release",
+          tag_name: "v1.0.0",
+          name: "Initial Release",
+          published_at: new Date().toISOString(),
+          prerelease: false,
+          html_url: "#"
+        });
+        data.stats.total_releases++;
+        table.setData(data);
+      }
+    };
+  </script>
+
+  <p style="margin-top: 20px;">
+    <button onclick="addRelease()">Add a release dynamically</button>
+  </p>
+</body>
+</html>

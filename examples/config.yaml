@@ -1,0 +1,36 @@
+# releaselog.yaml - Example configuration
+
+# Sources define where to fetch releases from
+sources:
+  # Fetch from a GitHub organization
+  - type: org
+    name: grokify
+    visibility: public  # "public", "private", or "all"
+    exclude:
+      - "*.github.io"   # Exclude GitHub Pages repos
+      - "deprecated-*"  # Exclude deprecated repos
+
+  # Fetch from a GitHub user
+  - type: user
+    name: johndoe
+    visibility: public
+
+  # Fetch from explicit repositories
+  - type: repos
+    repos:
+      - google/go-github
+      - spf13/cobra
+      - xuri/excelize
+
+# What to fetch: "releases", "tags", or "both"
+fetch_type: releases
+
+# Include pre-releases and drafts
+include_prereleases: false
+include_drafts: false
+
+# Only fetch releases after this date (YYYY-MM-DD or RFC3339)
+since: "2024-01-01"
+
+# Output path for the generated JSON
+output_path: releaselog.json

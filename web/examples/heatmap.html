@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReleaseLog Heatmap Example</title>
+  <!-- ReleaseLog CSS -->
+  <link rel="stylesheet" href="../dist/releaselog.css">
+  <!-- Cal-heatmap CSS (required for heatmap) -->
+  <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f6f8fa;
+    }
+    h1 { color: #24292e; }
+    .demo-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .demo-section h2 {
+      margin-top: 0;
+      color: #24292e;
+    }
+  </style>
+</head>
+<body>
+  <h1>ReleaseLog Heatmap Example</h1>
+
+  <div class="demo-section">
+    <h2>Release Activity Heatmap</h2>
+    <p>Click on any day to see releases for that date.</p>
+    <div id="heatmap"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Releases for Selected Date</h2>
+    <div id="selected-releases">
+      <p style="color: #6a737d;">Click on a day in the heatmap to view releases.</p>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Release Table</h2>
+    <div id="releases"></div>
+  </div>
+
+  <!-- Cal-heatmap (required for heatmap component) -->
+  <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
+  <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
+
+  <!-- ReleaseLog -->
+  <script src="../dist/releaselog.umd.js"></script>
+
+  <script>
+    // Initialize the table
+    const table = new ReleaseLog.ReleaseLog('#releases', {
+      data: {
+        ir_version: 'v1.0',
+        generated_at: new Date().toISOString(),
+        releases: generateSampleData(),
+        stats: {
+          total_releases: 50,
+          total_repos: 5
+        }
+      },
+      pagination: { enabled: true, size: 10 },
+      showFilters: true,
+      showStats: true
+    });
+
+    // Wait for data to load then create heatmap
+    setTimeout(() => {
+      const heatmapResult = table.createNavigableHeatmap('#heatmap', {
+        colorScheme: 'green',
+        range: 6,
+        onCellClick: (date, count, releases) => {
+          displaySelectedReleases(date, releases);
+        }
+      });
+    }, 100);
+
+    function displaySelectedReleases(date, releases) {
+      const container = document.getElementById('selected-releases');
+      if (releases.length === 0) {
+        container.innerHTML = `<p style="color: #6a737d;">No releases on ${date.toLocaleDateString()}</p>`;
+        return;
+      }
+
+      const html = `
+        <p><strong>${releases.length} release${releases.length !== 1 ? 's' : ''}</strong> on ${date.toLocaleDateString()}</p>
+        <ul>
+          ${releases.map(r => `
+            <li>
+              <strong>${r.repoPath}</strong> - ${r.tagName}
+              ${r.name !== r.tagName ? ` (${r.name})` : ''}
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      container.innerHTML = html;
+    }
+
+    function generateSampleData() {
+      const repos = [
+        'grokify/releaselog',
+        'grokify/mogo',
+        'grokify/goauth',
+        'grokify/schemago',
+        'grokify/chatblender'
+      ];
+      const releases = [];
+      const now = new Date();
+
+      // Generate releases over the past 6 months
+      for (let i = 0; i < 50; i++) {
+        const daysAgo = Math.floor(Math.random() * 180);
+        const date = new Date(now);
+        date.setDate(date.getDate() - daysAgo);
+
+        const repo = repos[Math.floor(Math.random() * repos.length)];
+        const [owner, name] = repo.split('/');
+        const version = `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}.${Math.floor(Math.random() * 10)}`;
+
+        releases.push({
+          id: i + 1,
+          repo_path: repo,
+          repo_owner: owner,
+          repo_name: name,
+          type: Math.random() > 0.2 ? 'release' : 'tag',
+          tag_name: version,
+          name: version,
+          body: `Release notes for ${version}`,
+          published_at: date.toISOString(),
+          draft: false,
+          prerelease: Math.random() > 0.9,
+          html_url: `https://github.com/${repo}/releases/tag/${version}`
+        });
+      }
+
+      return releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+    }
+  </script>
+</body>
+</html>

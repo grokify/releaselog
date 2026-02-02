@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/grokify/releaselog/spec/schema/releaselog.schema.json",
+  "title": "ReleaseLog",
+  "description": "Aggregated release log containing releases from multiple repositories. Go-Friendly JSON Schema - uses camelCase, compatible with schemago.",
+  "type": "object",
+  "required": ["specVersion", "generatedAt", "releases"],
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "description": "ReleaseLog specification version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["0.1.0"]
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the log was generated"
+    },
+    "sources": {
+      "type": "array",
+      "description": "Source identifiers (e.g., 'org:name', 'user:name', 'repo:owner/name')",
+      "items": {
+        "type": "string",
+        "pattern": "^(org|user|repo):.+"
+      }
+    },
+    "releases": {
+      "type": "array",
+      "description": "Array of release objects",
+      "items": {
+        "$ref": "#/$defs/release"
+      }
+    },
+    "stats": {
+      "$ref": "#/$defs/stats"
+    }
+  },
+  "$defs": {
+    "release": {
+      "type": "object",
+      "description": "A single release entry",
+      "required": ["repoPath", "repoOwner", "repoName", "tagName", "name", "type"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "GitHub release ID"
+        },
+        "repoPath": {
+          "type": "string",
+          "description": "Repository path (owner/repo)",
+          "pattern": "^[^/]+/[^/]+$",
+          "examples": ["agentplexus/agent-sdk"]
+        },
+        "repoOwner": {
+          "type": "string",
+          "description": "Repository owner"
+        },
+        "repoName": {
+          "type": "string",
+          "description": "Repository name"
+        },
+        "tagName": {
+          "type": "string",
+          "description": "Git tag name",
+          "examples": ["v1.0.0"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Release name/title"
+        },
+        "body": {
+          "type": "string",
+          "description": "Release description/body (from GitHub)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["release", "tag"],
+          "description": "Whether this is a GitHub release or just a git tag"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Publication timestamp"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "prerelease": {
+          "type": "boolean",
+          "description": "Whether this is a pre-release",
+          "default": false
+        },
+        "draft": {
+          "type": "boolean",
+          "description": "Whether this is a draft release",
+          "default": false
+        },
+        "urls": {
+          "$ref": "#/$defs/releaseUrls"
+        },
+        "downloads": {
+          "type": "array",
+          "description": "Download links for binaries, packages, etc.",
+          "items": {
+            "$ref": "#/$defs/download"
+          }
+        },
+        "author": {
+          "$ref": "#/$defs/author"
+        },
+        "categories": {
+          "type": "array",
+          "description": "Categorization tags",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["major", "feature"], ["patch", "security"]]
+        },
+        "highlights": {
+          "type": "array",
+          "description": "Key features or changes (short list)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "breakingChanges": {
+          "type": "boolean",
+          "description": "Whether this release contains breaking changes",
+          "default": false
+        },
+        "previousVersion": {
+          "type": "string",
+          "description": "Previous version tag (for diff URL construction)",
+          "examples": ["v0.9.0"]
+        }
+      }
+    },
+    "releaseUrls": {
+      "type": "object",
+      "description": "URLs related to a release",
+      "properties": {
+        "githubRelease": {
+          "type": "string",
+          "format": "uri",
+          "description": "GitHub release page URL"
+        },
+        "releaseNotes": {
+          "type": "string",
+          "format": "uri",
+          "description": "Detailed release notes URL"
+        },
+        "changelog": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to CHANGELOG.md (with anchor if available)"
+        },
+        "changelogJson": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to CHANGELOG.json"
+        },
+        "diff": {
+          "type": "string",
+          "format": "uri",
+          "description": "Git diff comparison URL"
+        },
+        "documentation": {
+          "type": "string",
+          "format": "uri",
+          "description": "Version-specific documentation URL"
+        },
+        "migrationGuide": {
+          "type": "string",
+          "format": "uri",
+          "description": "Upgrade/migration guide URL"
+        },
+        "tarball": {
+          "type": "string",
+          "format": "uri",
+          "description": "Source tarball URL"
+        },
+        "zipball": {
+          "type": "string",
+          "format": "uri",
+          "description": "Source zipball URL"
+        }
+      }
+    },
+    "download": {
+      "type": "object",
+      "description": "A downloadable artifact",
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name",
+          "examples": ["Linux (amd64)", "Docker Image"]
+        },
+        "url": {
+          "type": "string",
+          "description": "Download URL or install command"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["binary", "package", "container", "installer", "archive"],
+          "description": "Type of download"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Target platform",
+          "examples": ["linux/amd64", "darwin/arm64", "windows/amd64"]
+        },
+        "size": {
+          "type": "integer",
+          "description": "File size in bytes"
+        },
+        "checksum": {
+          "type": "string",
+          "description": "Checksum with algorithm prefix",
+          "examples": ["sha256:abc123..."]
+        }
+      }
+    },
+    "author": {
+      "type": "object",
+      "description": "Release author information",
+      "required": ["login"],
+      "properties": {
+        "login": {
+          "type": "string",
+          "description": "GitHub username"
+        },
+        "avatarUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Avatar image URL"
+        },
+        "profileUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "GitHub profile URL"
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "description": "Summary statistics",
+      "required": ["totalReleases", "totalRepos"],
+      "properties": {
+        "totalReleases": {
+          "type": "integer",
+          "description": "Total number of releases"
+        },
+        "totalRepos": {
+          "type": "integer",
+          "description": "Total number of repositories"
+        },
+        "releasesByRepo": {
+          "type": "object",
+          "description": "Map of repo path to release count",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "releasesByMonth": {
+          "type": "object",
+          "description": "Map of YYYY-MM to release count",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

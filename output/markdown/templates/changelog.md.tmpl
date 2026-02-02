@@ -1,0 +1,46 @@
+# Release Log
+
+Generated: {{ .Log.GeneratedAt.Format "2006-01-02 15:04:05 UTC" }}
+
+{{- if .Log.Stats }}
+
+## Summary
+
+- **Total Releases:** {{ .Log.Stats.TotalReleases }}
+- **Total Repositories:** {{ .Log.Stats.TotalRepos }}
+{{- end }}
+
+## Releases
+
+| Date | Repository | Tag | Name | Type |
+|------|------------|-----|------|------|
+{{- range .Releases }}
+| {{ formatDate .PublishedAt }} | [{{ .RepoPath }}](https://github.com/{{ .RepoPath }}) | [{{ .TagName }}]({{ if .URLs }}{{ .URLs.GitHubRelease }}{{ end }}) | {{ truncate (escapeTitle .Name) 50 }} | {{ .Type }} |
+{{- end }}
+
+---
+
+{{- range .Releases }}
+
+### {{ .RepoPath }} - {{ .TagName }}
+
+**Date:** {{ formatDate .PublishedAt }}
+**Type:** {{ .Type }}
+{{- if .Prerelease }}
+**Pre-release:** Yes
+{{- end }}
+{{- if .Author }}
+**Author:** [@{{ .Author.Login }}](https://github.com/{{ .Author.Login }})
+{{- end }}
+{{- if .URLs }}
+**Link:** [{{ .URLs.GitHubRelease }}]({{ .URLs.GitHubRelease }})
+{{- end }}
+
+{{- if .Body }}
+
+{{ .Body }}
+{{- end }}
+
+---
+
+{{- end }}

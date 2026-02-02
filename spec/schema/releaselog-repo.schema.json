@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/grokify/releaselog/spec/schema/releaselog-repo.schema.json",
+  "title": "ReleaseLogRepo",
+  "description": "Per-repository release log for enrichment. Provides additional metadata not available in GitHub Releases. Go-Friendly JSON Schema - uses camelCase, compatible with schemago.",
+  "type": "object",
+  "required": ["specVersion", "repo"],
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "description": "ReleaseLog specification version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["0.1.0"]
+    },
+    "repo": {
+      "type": "string",
+      "description": "Repository path (owner/repo)",
+      "pattern": "^[^/]+/[^/]+$",
+      "examples": ["agentplexus/agent-sdk"]
+    },
+    "defaults": {
+      "$ref": "#/$defs/repoDefaults"
+    },
+    "releases": {
+      "type": "array",
+      "description": "Array of release enrichment objects",
+      "items": {
+        "$ref": "#/$defs/releaseEnrichment"
+      }
+    }
+  },
+  "$defs": {
+    "repoDefaults": {
+      "type": "object",
+      "description": "Default values for release metadata within this repository",
+      "properties": {
+        "releaseNotesPattern": {
+          "type": "string",
+          "description": "Pattern for release notes files. Use {version} as placeholder.",
+          "examples": ["RELEASE_NOTES_{version}.md", "docs/releases/{version}.md"]
+        },
+        "documentationBase": {
+          "type": "string",
+          "format": "uri",
+          "description": "Base URL for version-specific documentation"
+        },
+        "changelogUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to CHANGELOG.md"
+        },
+        "changelogJsonUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to CHANGELOG.json"
+        },
+        "defaultBranch": {
+          "type": "string",
+          "description": "Default branch for constructing URLs",
+          "default": "main"
+        }
+      }
+    },
+    "releaseEnrichment": {
+      "type": "object",
+      "description": "Enrichment data for a specific release",
+      "required": ["tagName"],
+      "properties": {
+        "tagName": {
+          "type": "string",
+          "description": "Git tag name (must match GitHub release)",
+          "examples": ["v1.0.0"]
+        },
+        "urls": {
+          "$ref": "#/$defs/releaseUrls"
+        },
+        "downloads": {
+          "type": "array",
+          "description": "Additional download links",
+          "items": {
+            "$ref": "#/$defs/download"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "description": "Categorization tags",
+          "items": {
+            "type": "string"
+          }
+        },
+        "highlights": {
+          "type": "array",
+          "description": "Key features or changes",
+          "items": {
+            "type": "string"
+          }
+        },
+        "breakingChanges": {
+          "type": "boolean",
+          "description": "Whether this release contains breaking changes"
+        },
+        "previousVersion": {
+          "type": "string",
+          "description": "Previous version tag"
+        },
+        "minUpgradeFrom": {
+          "type": "string",
+          "description": "Minimum version that can upgrade to this version"
+        },
+        "deprecations": {
+          "type": "array",
+          "description": "Features deprecated in this release",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "releaseUrls": {
+      "type": "object",
+      "description": "URLs related to a release",
+      "properties": {
+        "releaseNotes": {
+          "type": "string",
+          "format": "uri",
+          "description": "Detailed release notes URL"
+        },
+        "documentation": {
+          "type": "string",
+          "format": "uri",
+          "description": "Version-specific documentation URL"
+        },
+        "migrationGuide": {
+          "type": "string",
+          "format": "uri",
+          "description": "Upgrade/migration guide URL"
+        },
+        "apiReference": {
+          "type": "string",
+          "format": "uri",
+          "description": "API reference documentation URL"
+        },
+        "blogPost": {
+          "type": "string",
+          "format": "uri",
+          "description": "Announcement blog post URL"
+        }
+      }
+    },
+    "download": {
+      "type": "object",
+      "description": "A downloadable artifact",
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name"
+        },
+        "url": {
+          "type": "string",
+          "description": "Download URL or install command"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["binary", "package", "container", "installer", "archive"],
+          "description": "Type of download"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Target platform"
+        },
+        "size": {
+          "type": "integer",
+          "description": "File size in bytes"
+        },
+        "checksum": {
+          "type": "string",
+          "description": "Checksum with algorithm prefix"
+        }
+      }
+    }
+  }
+}
