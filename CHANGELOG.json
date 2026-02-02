@@ -1,0 +1,43 @@
+{
+  "ir_version": "1.0",
+  "project": "releaselog",
+  "repository": "https://github.com/grokify/releaselog",
+  "versioning": "semver",
+  "commit_convention": "conventional",
+  "maintainers": ["grokify"],
+  "releases": [
+    {
+      "version": "v0.1.1",
+      "date": "2026-02-02",
+      "documentation": [
+        { "description": "Add README for npm package page", "commit": "9203079" }
+      ]
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-02-02",
+      "highlights": [
+        { "description": "Initial release with Go CLI for fetching GitHub releases and TypeScript web viewer component" }
+      ],
+      "added": [
+        { "description": "Go CLI with `fetch` and `generate` commands for aggregating GitHub releases", "commit": "d264db6" },
+        { "description": "TypeScript web viewer component with GitHub-style heatmap visualization", "commit": "2dcb33b" },
+        { "description": "JSON intermediate representation (IR) for programmatic access to release data", "commit": "d264db6" },
+        { "description": "Multiple output formats: Markdown, XLSX, JSON", "commit": "d264db6" },
+        { "description": "Filtering by date, repository, owner, release type, and categories", "commit": "d264db6" },
+        { "description": "npm package `@grokify/releaselog` for CDN and module usage", "commit": "2dcb33b" },
+        { "description": "CSS theming support with custom properties", "commit": "2dcb33b" },
+        { "description": "Example HTML pages with unpkg CDN integration", "commit": "65b67d6" },
+        { "description": "JSON specification and example data files", "commit": "e3228ff" }
+      ],
+      "documentation": [
+        { "description": "Add MkDocs site with landing page and live demo", "commit": "def3b57" },
+        { "description": "Add README with installation, quick start, and API reference", "commit": "341dd7f" },
+        { "description": "Add CLI reference and JavaScript API documentation", "commit": "def3b57" }
+      ],
+      "tests": [
+        { "description": "Add web viewer unit tests", "commit": "2c7e00d" }
+      ]
+    }
+  ]
+}
